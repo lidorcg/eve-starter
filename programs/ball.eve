@@ -21,6 +21,7 @@ search
   l.x > w
 
 commit
+  v.x := 0 - v.x
   [#console/log text: "hit the right wall: {{v}}"]
 ~~~
 
@@ -31,6 +32,7 @@ search
   l.x < 0
 
 commit
+  v.x := 0 - v.x
   [#console/log text: "hit the left wall: {{v}}"]
 ~~~
 
@@ -53,6 +55,7 @@ search
   l.y < 0
 
 commit
+  v.y := 0 - v.y
   [#console/log text: "hit the ceiling: {{v}}"]
 ~~~
 
