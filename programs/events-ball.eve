@@ -1,0 +1,113 @@
+# Ball
+
+draw a ball on the screen on each tick
+~~~ eve
+search
+  [#config w h]
+  [#location x y]
+
+bind
+  [#canvas/root width: w height: h children:
+    [#canvas/path fillStyle: "#FE1" children:
+      [type: "ellipse" x y radiusX: 10 radiusY: 10 rotation: 0 startAngle: 0 endAngle: 0]]]
+~~~
+
+
+compute velocity
+~~~ eve
+search
+  [#config vx vy]
+  rx = [#event #reverse-vx]
+  ry = [#event #reverse-vy]
+  powx = gather/count[given: rx]
+  powy = gather/count[given: ry]
+  cx = math/pow[value: -1 exponent: powx]
+  cy = math/pow[value: -1 exponent: powy]
+  x = cx * vx
+  y = cy * vy
+
+bind
+  [#velocity x y]
+~~~
+
+
+compute location
+~~~ eve
+search
+  [#config x0 y0]
+  moves = [#event #move x y]
+  mx = gather/sum[for: moves, value: x]
+  my = gather/sum[for: moves, value: y]
+  nx = mx + x0
+  ny = my + y0
+
+bind
+  [#location x: nx, y: ny]
+~~~
+
+change direction when hitting a wall
+~~~ eve
+search
+  [#system/timer tick]
+  [#config w]
+  [#location x]
+  x > w / 2
+
+commit
+  [#console/log text: "{{tick}}: hit the right wall"]
+  [#event #reverse-vx tick]
+~~~
+
+~~~ eve
+search
+  [#system/timer tick]
+  [#location x]
+  x < 20
+
+commit
+  [#console/log text: "{{tick}}: hit the left wall"]
+  [#event #reverse-vx tick]
+~~~
+
+~~~ eve
+search
+  [#system/timer tick]
+  [#config h]
+  [#location y]
+  y > h / 2
+
+commit
+  [#console/log text: "{{tick}}: hit the floor"]
+  [#event #reverse-vy tick]
+~~~
+
+~~~ eve
+search
+  [#system/timer tick]
+  [#location y]
+  y < 20
+
+commit
+  [#console/log text: "{{tick}}: hit the ceiling"]
+  [#event #reverse-vy tick]
+~~~
+
+commit a move event on every tick
+~~~ eve
+search
+  [#system/timer tick]
+  [#velocity x y]
+
+commit
+  [#event #move tick x y]
+~~~
+
+initialize state
+commit a timer that ticks every 200 milliseconds
+~~~ eve
+commit
+  [#config w: 1366, h: 768, x0: 200, y0: 100, vx: 10, vy: 12]
+  [#system/timer resolution: 200]
+  [#event #reverse-vx tick: 0]
+  [#event #reverse-vy tick: 0]
+~~~
