@@ -1,0 +1,37 @@
+# Primes
+
+create a set of natural numbers
+~~~ eve
+search
+  i = math/range[start: 1, stop: 100]
+
+commit
+  [#naturals n: i]
+~~~
+
+mark the non-prime numbers and print them to the screen as non-prime numbers
+~~~ eve
+search
+  [#naturals n]
+  a = math/pow[value: n exponent: 1 / 2]
+  b = math/floor[value: a]
+  b > 1
+  b < n
+  c = math/range[start: 2, stop: b]
+  0 = math/mod[value: n, by: c]
+
+bind
+  [#ui/div style: [color: "red"] sort: "{{n}}a" text: "{{n}}: is not a prime"]
+  [#non-prime n]
+~~~
+
+search for the natural numbers that are not marked as non-prime and print them
+as prime numbers
+~~~ eve
+search
+  [#naturals n]
+  not([#non-prime n])
+
+bind
+  [#ui/div style: [color: "green"] sort: "{{n}}b" text: "{{n}}: is a prime"]
+~~~

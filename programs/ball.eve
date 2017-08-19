@@ -1,0 +1,89 @@
+# Ball
+
+draw a ball on the screen on each tick
+~~~ eve
+search
+  [#config w h]
+  [#system/timer tick]
+  [#location x y]
+
+bind
+  [#canvas/root width: w height: h children:
+    [#canvas/path fillStyle: "#FE1" children:
+      [type: "ellipse" x : x y : y radiusX: 10 radiusY: 10 rotation: 0 startAngle: 0 endAngle: 0]]]
+~~~
+
+~~~ eve
+search
+  [#config w]
+  v = [#velocity]
+  l = [#location]
+  l.x > w
+
+commit
+  [#console/log text: "hit the right wall: {{v}}"]
+~~~
+
+~~~ eve
+search
+  v = [#velocity]
+  l = [#location]
+  l.x < 0
+
+commit
+  [#console/log text: "hit the left wall: {{v}}"]
+~~~
+
+~~~ eve
+search
+  [#config h]
+  v = [#velocity]
+  l = [#location]
+  l.y > h / 4
+
+commit
+  v.y := 0 - v.y
+  [#console/log text: "hit the floor: {{v}}, new vy: {{vy$}}"]
+~~~
+
+~~~ eve
+search
+  v = [#velocity]
+  l = [#location]
+  l.y < 0
+
+commit
+  [#console/log text: "hit the ceiling: {{v}}"]
+~~~
+
+update state on each tick
+~~~ eve
+search
+  [#system/timer tick]
+  v = [#velocity]
+  l = [#location]
+
+commit
+  l.x := l.x + v.x
+  l.y := l.y + v.y
+~~~
+
+log velocity and location to console
+~~~ eve
+search
+  v = [#velocity]
+  l = [#location]
+
+commit
+  [#console/log text: "v: {{v}}, l: {{l}}"]
+~~~
+
+initialize state
+commit a timer that ticks every 1000 milliseconds
+~~~ eve
+commit
+  [#config w: 1366 h: 768]
+  [#location x: 110 y: 110]
+  [#velocity x: 10 y: 12]
+  [#system/timer resolution: 1000]
+~~~

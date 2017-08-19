@@ -1,0 +1,8 @@
+# Hello World
+
+print hello world to the screen and the console log
+~~~ eve
+commit
+  [#ui/h1 text: "Hello world!"]
+  [#console/log text: "Hello world!"]
+~~~
