@@ -1,0 +1,72 @@
+# Bouncing Ball
+
+init state
+~~~ eve
+commit
+  [#screen w: 1366, h: 768]
+  [#ball x: 100, y: 100, vx: 10, vy: 12, tick: 0]
+  [#system/timer resolution: 75]
+~~~
+
+advance the ball on each tick
+~~~ eve
+search
+  [#system/timer tick]
+  ball = [#ball x y vx vy tick != tick]
+
+commit
+  ball.x := x + vx
+  ball.y := y + vy
+  ball.tick := tick
+~~~
+
+change direction when hitting a wall
+~~~ eve
+search
+  [#screen w]
+  ball = [#ball x vx]
+  x > w / 2
+
+commit
+  ball.vx := 0 - vx
+~~~
+
+~~~ eve
+search
+  ball = [#ball x vx]
+  x < 20
+
+commit
+  ball.vx := 0 - vx
+~~~
+
+~~~ eve
+search
+  [#screen h]
+  ball = [#ball y vy]
+  y > h / 2
+
+commit
+  ball.vy := 0 - vy
+~~~
+
+~~~ eve
+search
+  ball = [#ball y vy]
+  y < 20
+
+commit
+  ball.vy := 0 - vy
+~~~
+
+draw a ball on the screen on each tick
+~~~ eve
+search
+  [#screen w h]
+  [#ball x y]
+
+bind
+  [#canvas/root width: w height: h children:
+    [#canvas/path fillStyle: "#FE1" children:
+      [type: "ellipse" x y radiusX: 10 radiusY: 10 rotation: 0 startAngle: 0 endAngle: 0]]]
+~~~
